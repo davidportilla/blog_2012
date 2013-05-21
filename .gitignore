@@ -2,3 +2,13 @@
 *~
 node_modules
 
+
+*.sqlite
+
+*.log
+
+Procfile
+
+.env
+
+config/config.json
