@@ -9,11 +9,13 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , partials = require('express-partials')
-  , postController = require('./routes/post_controller.js');
+  , postController = require('./routes/post_controller.js')
+  , count = require('./count.js');
 
 var app = express();
 
 app.use(partials());
+app.use(count());
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
