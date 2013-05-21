@@ -49,6 +49,10 @@ app.locals.escapeText =  function(text) {
 
 app.get('/', routes.index);
 app.get('/users', user.list);
+app.get('/about', function (req, res)
+{
+    res.render('about.ejs');
+});
 
 //---------------------
 app.get('/posts.:format?', postController.index);
