@@ -2,12 +2,9 @@
 *~
 node_modules
 
-
 *.sqlite
 
 *.log
-
-Procfile
 
 .env
 
