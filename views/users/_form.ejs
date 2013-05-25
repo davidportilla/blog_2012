@@ -3,21 +3,21 @@
 <script>
    function confirmPassword() {
       var pw1 = document.all['user_password'].value;    
-      var pw2 = document.all['user_confirm_password'].value;  
+      var pw2 = document.all['user_confirm_password'].value;
 
      <% if ( ! user.id) { %>
         if (!pw1 || !pw2) {
-           alert('Debe rellenar los campos de Password y Confirmación.');
-           return false;         
-        } 
+           //alert('Debe rellenar los campos de Password y Confirmación.');
+           //return false;         
+        }
      <% } %>
 
       if (pw1 == pw2) {
-         return true;
+         //return true;
       } else {
-         alert('Los passwords introducidos no coinciden.');
-         return false;		     
-      } 
+         //alert('Los passwords introducidos no coinciden.');
+         //return false;   
+      }
    }
 </script>
 
@@ -50,14 +50,14 @@
   </div>
 
 
-  <div class="field">
+  <div class='<%- locals.resaltarEnRojoPassword ? "invalid_field" : "field" %>'>
     <label for="user_password">Password:</label><br />
     <input type="password" id="user_password" name="user[password]" size="30" value='' />
   </div>
 
-  <div class="field">
+  <div class='<%- locals.resaltarEnRojoConfirmarPassword ? "invalid_field" : "field" %>'>
     <label for="user_confirm_password">Confirmar Password:</label><br />
-    <input type="password" id="user_confirm_password" size="30" value='' />
+    <input type="password" id="user_confirm_password" name="user[confirm_password]" size="30" value='' />
   </div>
 
 

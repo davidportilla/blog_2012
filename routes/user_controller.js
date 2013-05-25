@@ -98,9 +98,30 @@ exports.create = function(req, res, next) {
                     return;
                 } 
                 
-                // El password no puede estar vacio
-                if ( ! req.body.user.password) {
+                var pw1 = req.body.user.password;
+                var pw2 = req.body.user.confirm_password;
+
+                res.locals.resaltarEnRojoPassword = false;
+                res.locals.resaltarEnRojoConfirmarPassword = false;
+                // El password no puede estar vacío
+                if (! pw1) {
                     req.flash('error', 'El campo Password es obligatorio.');
+                    res.locals.resaltarEnRojoPassword = true;
+                    res.render('users/new', {user: user});
+                    return;
+                }
+                if (! pw2) {
+                    req.flash('error', 'El campo Confirmar Password es obligatorio.');
+                    res.locals.resaltarEnRojoConfirmarPassword = true;
+                    res.render('users/new', {user: user});
+                    return;
+                }
+
+                // Los password introducidos deben ser iguales
+                if(pw1 != pw2) {
+                    req.flash('error', 'Los password no coinciden');
+                    res.locals.resaltarEnRojoPassword = true;
+                    res.locals.resaltarEnRojoConfirmarPassword = true;
                     res.render('users/new', {user: user});
                     return;
                 }
