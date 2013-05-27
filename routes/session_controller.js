@@ -20,8 +20,6 @@ exports.requiresLogin = function (req, res, next) {
     }
 };
 
-
-
 // Formulario para hacer login
 //
 // Es la tipica ruta REST que devuelve un formulario para crear 
@@ -36,7 +34,6 @@ exports.new = function(req, res) {
                { redir: req.query.redir || '/'
                });
 };
-
 
 // Crear session, es decir, hacer el login.
 //
@@ -76,12 +73,29 @@ exports.create = function(req, res) {
         // Solo guardo algunos campos del usuario en la sesion.
         // Esto es lo que uso para saber si he hecho login o no.
         req.session.user = {id:user.id, login:user.login, name:user.name};
-
+        // Cada vez que se vaya a cualquier path se actualiza el timeout de la cookie
+        req.session.cookie.path = '*';
+        req.session.cookie.expires = new Date(Date.now() + 60000);
         // Vuelvo al url indicado en redir
         res.redirect(redir);
     });
 }; 
 
+var usuarioConectado = false;
+
+exports.timeout = function(req, res, next) {
+    console.log("//*********************************");
+    if (req.session.user) {
+        usuarioConectado = true;
+        console.log("Tiempo restante de sesión: " + req.session.cookie.maxAge);
+    } else {
+        if(usuarioConectado) {
+            usuarioConectado = false;
+            req.flash('info', 'La sesión ha expirado');
+        }
+    }    
+    next();
+}
 
 // Logout
 // 

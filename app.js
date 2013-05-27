@@ -47,7 +47,7 @@ app.configure(function(){
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
 });
- 
+
 app.use(function(err, req, res, next) {
 
   if (util.isError(err)) {
@@ -77,6 +77,8 @@ app.locals.escapeText =  function(text) {
 };
 
 // -- Routes
+
+app.all('*', sessionController.timeout);
 
 app.get('/', routes.index);
 
