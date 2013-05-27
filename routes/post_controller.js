@@ -55,28 +55,49 @@ exports.index = function(req, res, next) {
 
           console.log(posts);
           
+          function renderiza() {
             switch (format) { 
               case 'html':
               case 'htm':
-                  res.render('posts/index', {
-                    posts: posts
-                  });
-                  break;
+                res.render('posts/index', {posts: posts});
+                break;
               case 'json':
-                  res.send(posts);
-                  break;
+                res.send(posts);
+                break;
               case 'xml':
-                  res.send(posts_to_xml(posts));
-                  break;
+                res.send(posts_to_xml(posts));
+                break;
               case 'txt':
-                  res.send(posts.map(function(post) {
-                      return post.title+' ('+post.body+')';
-                  }).join('\n'));
-                  break;
+                res.send(posts.map(function(post) {
+                  return post.title+' ('+post.body+')';
+                }).join('\n'));
+                break;
               default:
-                  console.log('No se soporta el formato \".'+format+'\" pedido para \"'+req.url+'\".');
-                  res.send(406);
+                console.log('No se soporta el formato \".'+format+'\" pedido para \"'+req.url+'\".');
+                res.send(406);
+            } 
+          }
+
+          // Número de comentarios de cada post para cargarlo en las vistas
+          res.locals.numberOfComments = [];
+
+          if (posts.length > 0) {
+            for (var i in posts) {
+            if (i < posts.length - 1) {
+              models.Comment.count({where: {postId: posts[i].id}}).success(function(n) {
+                res.locals.numberOfComments.push(n);
+              });
+            } else if(i == posts.length - 1) {
+              models.Comment.count({where: {postId: posts[i].id}}).success(function(n) {
+                res.locals.numberOfComments.push(n);
+                renderiza();
+              });
+              }
             }
+          } else {
+              renderiza();
+          }
+                      
         })
         .error(function(error) {
             next(error);
@@ -129,6 +150,9 @@ exports.show = function(req, res, next) {
                            include: [ { model: models.User, as: 'Author' } ] 
                  })
                  .success(function(comments) {
+                  
+                    // Número de comentarios del post para cargarlo en las vistas
+                    res.locals.numberOfComments = comments.length;
 
                     var format = req.params.format || 'html';
                     format = format.toLowerCase();

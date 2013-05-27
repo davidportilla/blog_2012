@@ -24,10 +24,12 @@
           <a href="/posts/<%= posts[i].id %>/edit"> Editar </a> 
           <a href="" onclick="submit();return false"> Borrar </a>  
         </form>
+        </br>
 
       <% } %>
 
      </footer>
+     <label><em><%= "Comentarios: " + numberOfComments[i] %></em></label>
   </article>
 
 <%  }; %>
