@@ -5,29 +5,18 @@
       <h1>
         <a href='/posts/<%= posts[i].id %>' class='titlelink'> <%= posts[i].title %> </a>
         <small>por <em> <%= posts[i].author && posts[i].author.name || "Sin autor" %> </em></small>
-        <% if (session.user) {%>
-
-        <% if(!isFavourite[i]) {%>
-          <form class="pull-right" method='post' action='/users/<%= session.user.id %>/favourites/<%= posts[i].id %>'>
-            <input type='hidden' name='_method' value='put'>
-            <input type="image" src="/images/bookmark_gray.png" height="42" width="42">
-          </form>
-        <%} else {%>
-          <form class="pull-right" method='post' action='/users/<%= session.user.id %>/favourites/<%= posts[i].id %>'>
+        <form class="pull-right" method='post' action='/users/<%= session.user.id %>/favourites/<%= posts[i].id %>'>
             <input type='hidden' name='_method' value='delete'>
             <input type="image" src="/images/bookmark.png" height="42" width="42">
-          </form>
-        <%}%>
-
-        <% } %>
+        </form>
       </h1>
+
      <em> <%= posts[i].updatedAt.toLocaleDateString() %></em>
    </div>
       
      <p>
         <%= posts[i].body.slice(0,1000) %> ... 
      </p>
-
      <footer class="pull-right">
 
       <% if (session.user && session.user.id == posts[i].authorId) {%>
@@ -49,12 +38,12 @@
       <% } %>
 
      <footer>
+
   </div>
 <%  }; %>
 
 <footer>
   <nav>
-    <a href="/posts/new"> <i class='icon-plus-sign'></i> Crear nuevo Post </a>
+    <a href="/"> Volver </a>
   </nav>
 </footer>
-

@@ -5,6 +5,21 @@
       <h1>
         <%= post.title %>
         <small>por <em> <%= post.author && post.author.name || "Sin autor" %> </em></small>
+        <% if (session.user) {%>
+
+        <% if(!isFavourite) {%>
+          <form class="pull-right" method='post' action='/users/<%= session.user.id %>/favourites/<%= post.id %>'>
+            <input type='hidden' name='_method' value='put'>
+            <input type="image" src="/images/bookmark_gray.png" height="42" width="42">
+          </form>
+        <%} else {%>
+          <form class="pull-right" method='post' action='/users/<%= session.user.id %>/favourites/<%= post.id %>'>
+            <input type='hidden' name='_method' value='delete'>
+            <input type="image" src="/images/bookmark.png" height="42" width="42">
+          </form>
+        <%}%>
+
+        <% } %>
       </h1>
      <em> <%= post.updatedAt.toLocaleDateString() %></em>
    </div>

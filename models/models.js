@@ -20,10 +20,12 @@ var sequelize = new Sequelize(process.env.DATABASE_NAME,
 //    - User desde user.js.
 //    - Comment desde comment.js.
 //    - Attachment desde attachment.js.
+//    - Favourite desde favourite.js
 var Post = sequelize.import(path.join(__dirname,'post'));
 var User = sequelize.import(path.join(__dirname,'user'));
 var Comment = sequelize.import(path.join(__dirname,'comment'));
 var Attachment = sequelize.import(path.join(__dirname,'attachment'));
+var Favourite = sequelize.import(path.join(__dirname, 'favourite'));
 
 // Relaciones
 
@@ -56,8 +58,17 @@ Comment.belongsTo(Post, {foreignKey: 'postId'});
 
 Attachment.belongsTo(Post, {foreignKey: 'postId'});
 
+// Relaciones con los favoritos
+User.hasMany(Favourite, {foreignKey: 'userId'});
+Post.hasMany(Favourite, {foreignKey: 'postId'});
+Favourite.belongsTo(User, {foreignKey: 'userId'});
+Favourite.belongsTo(Post, {foreignKey: 'postId'});
+
 // Exportar los modelos:
 exports.Post = Post;
 exports.User = User;
 exports.Comment = Comment;
 exports.Attachment = Attachment;
+exports.Favourite = Favourite;
+
+sequelize.sync();

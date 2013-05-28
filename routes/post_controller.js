@@ -53,8 +53,7 @@ exports.index = function(req, res, next) {
 	      })
         .success(function(posts) {
 
-          // console.log(posts);
-          
+          function renderiza() {
             switch (format) { 
               case 'html':
               case 'htm':
@@ -77,6 +76,46 @@ exports.index = function(req, res, next) {
                   console.log('No se soporta el formato \".'+format+'\" pedido para \"'+req.url+'\".');
                   res.send(406);
             }
+          }
+
+          // Array que indica qué post es favorito y cuál no
+          res.locals.isFavourite = [];
+          
+          if (req.session.user && posts.length > 0) {
+              for (var i in posts) {
+                if (i < posts.length - 1) {
+                  // Comprueba si es favorito del usuario
+                  models.Favourite.find({where: {userId: req.session.user.id, postId: posts[i].id}}).success(function(favourite) {
+                    if(favourite != null) {
+                      console.log("Es favorito");
+                      res.locals.isFavourite.push(true);
+                    } else {
+                      console.log("No es favorito");
+                      res.locals.isFavourite.push(false);
+                    }
+                  }).error(function(error){
+                    next(error);
+                  });
+                } else if(i == posts.length - 1) {
+                  // Comprueba si es favorito del usuario y renderiza la vista
+                  models.Favourite.find({where: {userId: req.session.user.id, postId: posts[i].id}}).success(function(favourite) {
+                    if(favourite != null) {
+                      console.log("Es favorito");
+                      res.locals.isFavourite.push(true);
+                    } else {
+                      console.log("No es favorito");
+                      res.locals.isFavourite.push(false);
+                    }
+                    renderiza();
+                  }).error(function(error){
+                    next(error);
+                  });
+                }
+             }
+          } else {
+            renderiza();
+          }
+ 
         })
         .error(function(error) {
             next(error);
@@ -121,6 +160,20 @@ exports.show = function(req, res, next) {
 
             // Si encuentro al autor lo añado como el atributo author, sino añado {}.
             req.post.author = user || {};
+
+            // Si es favorito estrella amarilla, si no gris
+            if(req.session.user) {
+              models.Favourite.find({where: {userId: req.session.user.id, postId: req.post.id}}).success(function(favourite) {
+                    if(favourite != null) {
+                      res.locals.isFavourite = true;
+                    } else {
+                      console.log("No es favorito");
+                      res.locals.isFavourite = false;
+                    }
+                  }).error(function(error){
+                    next(error);
+                  });
+            }
 
             // Buscar Adjuntos
             req.post.getAttachments({order: 'updatedAt DESC'})
