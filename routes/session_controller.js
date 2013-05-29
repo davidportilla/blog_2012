@@ -84,16 +84,19 @@ exports.create = function(req, res) {
 var usuarioConectado = false;
 
 exports.timeout = function(req, res, next) {
-    console.log("//*********************************");
-    if (req.session.user) {
+    if(req.path != '/logout') { // Si el usuario se desconecta no se ejecuta esto
+        if (req.session.user) {
         usuarioConectado = true;
         console.log("Tiempo restante de sesión: " + req.session.cookie.maxAge);
+        } else {
+            if(usuarioConectado) { // No hay sesión y (usuarioConectado = true) => sesion expirada
+                usuarioConectado = false;
+                req.flash('info', 'La sesión ha expirado');
+            }
+        } 
     } else {
-        if(usuarioConectado) {
-            usuarioConectado = false;
-            req.flash('info', 'La sesión ha expirado');
-        }
-    }    
+        usuarioConectado = false;
+    }
     next();
 }
 
